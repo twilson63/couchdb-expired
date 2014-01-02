@@ -1,7 +1,7 @@
 var _ = require('underscore');
 var async = require('async');
 
-module.exports = function(config) {
+module.exports = function(config, cb) {
   var _default = {
     server: "http://localhost:5984",
     dbs: ["eirenerx"],
@@ -24,57 +24,39 @@ module.exports = function(config) {
   // Check and see if view exists
   config.dbs[0] === "*" ? nano.db.list(process) : process(null, config.dbs);
 
-  function expire(cb) {
-    db.view(config._design_doc._id, '_default', { limit: 40000 }, function(e,b) {
-      if (e) { return(e); }
-      var results = _(res.rows).map(function(row) { 
-        return _.extend(row, { _deleted: true});
+  function expire(db, cb) {
+    db.view('expired', '_default', { limit: 4000 }, function(e,b) {
+      if (e) { return cb(e); }
+      var results = _(b.rows).map(function(row) { 
+        return {
+          _id: row.key,
+          _rev: row.value,
+          _deleted: true
+        }
       });
-      db.bulk(results, cb);
+      db.bulk({ docs: results}, function(err, res) {
+        cb(null, res);
+      });
     });
   }
 
   function process(err, list) {
-    _(list).each(function(name) {
+    var results = [];
+    async.map(list, function(name, cb) {
       var db = nano.use(name);
-      expire(function(e, res) {
+      expire(db, function(e, res) {
         if (e) {
           // create view and rerun
-        }
-        // report outcome
-      });
-
-      async.waterfall([
-        // get design doc
-        // function (cb) { db.get(config._design_doc._id, cb); },
-        // insert if does not exist
-        function (cb) {
-          // if (err) { return cb(null, { ok: true }); }
-          db.insert(config._design_doc, config._design_doc._id, cb);
-        },
-        // call expired view
-        function(err, res, cb) {
-          console.log('get expired docs');
-          db.view(config._design_doc._id, '_default', { limit: 40000 }, cb);
-        },
-        // mark the documents as deleted
-        function(err, res, cb) {
-          if (err) { return cb(err); }
-          var results = _(res.rows).map(function(row) { 
-            return _.extend(row, { _deleted: true});
+          db.insert(config._design_doc, "_design/expired", function(err, body) {
+            if (err) { return cb(err); }
+            expire(db, function(e, r) { cb(null, r); });
           });
-          cb(null, results);
-        },
-        // perform bulk operation
-        function(err, rows, cb) {
-          if (err) { return cb(err); }
-          db.bulk(rows, cb);
+          return;
         }
-      ], function(err, res) {
-        console.log('jump to start do not collect 200');
-        if (err) { console.log(err); }
-        console.log(res);
+        cb(null, res);
       });
+    }, function(err, results) {
+      cb(null, results);
     });
   }
 }
