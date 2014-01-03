@@ -16,5 +16,25 @@
   },
   "scripts": {
     "test": "mocha test/*.js test/**/*.js"
-  }
+  },
+  "description": "This worker can be launched by cron or other scheduler to run daily and bulk deletions all expired documents from your couchdb databases.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/twilson63/couchdb-expired.git"
+  },
+  "keywords": [
+    "couchdb",
+    "expire",
+    "documents"
+  ],
+  "author": "Tom",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/twilson63/couchdb-expired/issues"
+  },
+  "homepage": "https://github.com/twilson63/couchdb-expired"
 }
