@@ -1,9 +1,18 @@
-# CouchDb Expired
+# CouchDb Expired Worker
 
-This node app can be launched by cron or other scheduler to run daily and bulk
-delete all expired documents from your couchdb databases.
+This worker can be launched by cron or other scheduler to run daily and bulk
+deletions all expired documents from your couchdb databases.
 
-First you want to create a config file, this file will list the server and all of your databases that you wish to manage:
+## Install
+
+`npm install couchdb-expired -g`
+
+## Getting started
+
+First you want to create a config file, this file will list the server and all of your databases that you wish to manage: (eg. expired-config.json)
+
+
+### Config File Example
 
 ``` json
 {
@@ -21,6 +30,33 @@ First you want to create a config file, this file will list the server and all o
 }
 ```
 
-On the first run the application will insert the view that is in the design_doc node of the json document.
+### add command to crontab to run daily
 
+``` sh
+crontab -e
+0 3 * * * expired ~/expired-config.json
+```
+Now every day on the 3rd hour the expire job should run.
 
+## Tests
+
+`npm test`
+
+## Development Environment
+
+* fork and clone
+* `npm install`
+* `npm test`
+
+## LICENSE
+
+MIT
+
+## Contributions
+
+* Pull Requests welcome, please include tests
+
+## TODO
+
+* add test for design doc creation
+* add test for multiple databases

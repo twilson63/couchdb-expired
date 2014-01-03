@@ -13,4 +13,4 @@ module.exports = function(config, cb) {
   function process(err, list) { 
     async.map(list, remove, cb); 
   }
-}
+};
