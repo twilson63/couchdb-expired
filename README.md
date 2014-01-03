@@ -5,7 +5,7 @@ deletions all expired documents from your couchdb databases.
 
 ## Install
 
-`npm install couchdb-expired -g`
+`npm install expired -g`
 
 ## Getting started
 
