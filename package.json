@@ -1,6 +1,6 @@
 {
   "name": "expired",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "dependencies": {
     "nano": "~4.2.1",
     "underscore": "~1.5.2",
