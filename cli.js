@@ -1,3 +1,5 @@
+#! /usr/bin/env /usr/local/bin/node
+
 var config = process.argv[2] ? require(process.argv[2]) : {};
 var expire = require(__dirname + '../');
 expire(config, function(err, res) {
