@@ -10,5 +10,8 @@
     "nock": "~0.27.1",
     "mocha": "~1.16.2",
     "expect.js": "~0.2.0"
+  },
+  "scripts": {
+    "test": "mocha test/*.js test/**/*.js"
   }
 }
